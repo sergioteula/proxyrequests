@@ -1,2 +1,2 @@
-# proxyrequests
-Browse the web privately with automatic proxies
+# proxyrequests for Python
+Python HTTP requests with automatic proxies
