@@ -60,7 +60,7 @@ class browser:
                         except Exception:
                             pass
 
-        while True:
+        while self.proxies:
             proxy = random.choice(list(self.proxies))
             try:
                 result = requests.get(self.url, proxies={"http": proxy, "https": proxy},
