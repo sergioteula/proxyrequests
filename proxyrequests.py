@@ -14,7 +14,7 @@ USER_AGENT = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebK
                             '(KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36'}
 
 
-class browser:
+class Browser:
     """This class allows loading pages using proxies.
 
     Args:
@@ -103,7 +103,7 @@ class browser:
 
 
 if __name__ == '__main__':
-    browser = browser()
+    browser = Browser()
     print('Number of proxies: ' + str(len(browser.proxies)))
     browser.get('https://www.google.com')
     if browser.page:
