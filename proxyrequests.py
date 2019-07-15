@@ -32,20 +32,9 @@ class Browser:
         self.load_time = None
         self.used_proxies = 0
         self.proxies = set([])
+        self.get_proxies()
 
-        result = requests.get('https://raw.githubusercontent.com/clarketm/proxy-list/master/'
-                              'proxy-list.txt', headers=USER_AGENT, timeout=10)
-        if result.status_code == requests.codes.ok:
-            parser = result.text.split('\n\n')[1].split('\n')
-            for i in parser:
-                if 'H' in i and 'S' in i and '+' in i:
-                    proxy = i.split()[0]
-                    try:
-                        self.proxies.add(proxy)
-                    except Exception:
-                        pass
-
-    def get(self, url, cookies=None):
+    def load_web(self, url, cookies=None):
         """Load the web and saves the code on page attribute.
 
         Args:
@@ -66,17 +55,7 @@ class Browser:
         start = timer()
 
         if len(self.proxies) < 15 or self._force_update:
-            result = requests.get('https://raw.githubusercontent.com/clarketm/proxy-list/master/'
-                                  'proxy-list.txt', headers=USER_AGENT, timeout=10)
-            if result.status_code == requests.codes.ok:
-                parser = result.text.split('\n\n')[1].split('\n')
-                for i in parser:
-                    if 'H' in i and 'S' in i and '+' in i:
-                        proxy = i.split()[0]
-                        try:
-                            self.proxies.add(proxy)
-                        except Exception:
-                            pass
+            self.get_proxies()
 
         while self.proxies:
             proxy = random.choice(list(self.proxies))
@@ -101,10 +80,36 @@ class Browser:
 
         return self.page
 
+    def get_proxies(self):
+        """Loads proxies and returns them in a list"""
+
+        result = requests.get('https://raw.githubusercontent.com/clarketm/proxy-list/master/'
+                              'proxy-list.txt', headers=USER_AGENT, timeout=10)
+        if result.status_code == requests.codes.ok:
+            parser = result.text.split('\n\n')[1].split('\n')
+            for i in parser:
+                if 'H' in i and 'S' in i and '+' in i:
+                    proxy = i.split()[0]
+                    try:
+                        self.proxies.add(proxy)
+                    except Exception:
+                        pass
+
+        return list(self.proxies)
+
+    def get_proxy(self):
+        """Returns a random proxy on each call"""
+
+        if not self.proxies:
+            self.get_proxies()
+        return random.choice(list(self.proxies))
+
 
 if __name__ == '__main__':
+    print('==== Starting browser ====')
     browser = Browser()
     print('Number of proxies: ' + str(len(browser.proxies)))
+    print('Loading the web, please wait...')
     browser.get('https://www.google.com')
     if browser.page:
         print('Web loaded correctly')
@@ -113,3 +118,4 @@ if __name__ == '__main__':
     print('Elapsed time: %.2f seconds' % browser.load_time)
     print('Proxies used: ' + str(browser.used_proxies))
     print('Remaining proxies: ' + str(len(browser.proxies)))
+    print('Random proxy: ' + browser.get_proxy())
